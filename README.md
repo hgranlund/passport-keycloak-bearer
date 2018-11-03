@@ -2,30 +2,64 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/hgranlund/passport-keycloak-bearer.svg?style=social&label=Stars)](https://github.com/hgranlund/passport-keycloak-bearer)
 
-> HTTP Bearer authentication strategy for Passport and Keycloak
+> HTTP Bearer authentication strategy for [Passport](http://passportjs.org/) and [Keycloak](https://www.keycloak.org/).
 
-Please ★ this repo if you found it useful ★ ★ ★
+This module lets you authenticate HTTP requests using bearer tokens with a Keycloak authority, in your Node.js
+applications.  Bearer tokens are typically used protect API endpoints, and are
+often issued using OAuth 2.0.
 
+By plugging into Passport, bearer token support can be easily and unobtrusively
+integrated into any application or framework that supports
+[Connect](http://www.senchalabs.org/connect/)-style middleware, including
+[Express](http://expressjs.com/).
+
+
+## Install
+
+    $ npm install passport-keycloak-bearer
 
 ## Usage
 
-[Contribute](https://github.com/hgranlund/passport-keycloak-bearer/blob/master/CONTRIBUTING.md) usage docs
+
+#### Configure Strategy
+
+The HTTP Bearer authentication strategy authenticates users using a bearer
+token.  The strategy requires a `verify` callback, which accepts that
+credential and calls `done` providing a user.  Optional `info` can be passed,
+typically including associated scope, which will be set by Passport at
+`req.authInfo` to be used by later middleware for authorization and access
+control.
+
+    passport.use(new KeycloakBearerStrategy(
+      function(verifidToken, done) {
+        const user = createUser(verifidToken);
+        return done(null, user, { scope: 'all' });
+      }
+    ));
+
+#### Authenticate Requests
+
+Use `passport.authenticate()`, specifying the `'keycloak'` strategy, to
+authenticate requests.  Requests containing bearer verifidT do not require session
+support, so the `session` option can be set to `false`.
+
+For example, as route middleware in an [Express](http://expressjs.com/)
+application:
+
+    app.get('/profile', 
+      passport.authenticate('keycloak', { session: false }),
+      function(req, res) {
+        res.json(req.user);
+      });
 
 
 ## Support
 
 Submit an [issue](https://github.com/hgranlund/passport-keycloak-bearer/issues/new)
 
+## Contribute
 
-## Screenshots
-
-[Contribute](https://github.com/hgranlund/passport-keycloak-bearer/blob/master/CONTRIBUTING.md) a screenshot
-
-
-## Contributing
-
-Review the [guidelines for contributing](https://github.com/hgranlund/passport-keycloak-bearer/blob/master/CONTRIBUTING.md)
-
+[Contribute](https://github.com/hgranlund/passport-keycloak-bearer/blob/master/CONTRIBUTING.md) usage docs
 
 ## License
 
@@ -34,21 +68,6 @@ Review the [guidelines for contributing](https://github.com/hgranlund/passport-k
 [Simen Haugerud Granlund](https://hgranlund.com) © 2018
 
 
-## Changelog
-
-Review the [changelog](https://github.com/hgranlund/passport-keycloak-bearer/blob/master/CHANGELOG.md)
-
-
 ## Credits
 
 * [Simen Haugerud Granlund](https://hgranlund.com) - Author
-
-
-## Support on Liberapay
-
-A ridiculous amount of coffee ☕ ☕ ☕ was consumed in the process of building this project.
-
-[Add some fuel](https://liberapay.com/hgranlund/donate) if you'd like to keep me going!
-
-[![Liberapay receiving](https://img.shields.io/liberapay/receives/hgranlund.svg?style=flat-square)](https://liberapay.com/hgranlund/donate)
-[![Liberapay patrons](https://img.shields.io/liberapay/patrons/hgranlund.svg?style=flat-square)](https://liberapay.com/hgranlund/donate)

@@ -46,7 +46,10 @@
     "prepublish": "npm run clean && npm run build",
     "start": "babel-node src"
   },
-  "dependencies": {},
+  "dependencies": {
+    "keycloak-backend": "^1.1.0",
+    "passport-strategy": "^1.0.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
@@ -56,7 +59,7 @@
     "babel-preset-everything": "^0.1.2",
     "eslint": "^5.5.0",
     "eslint-config-jam": "^0.1.2",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "prettier": "^1.14.3",
     "eslint-plugin-react": "^7.11.1",
     "rimraf": "^2.6.2"
   },

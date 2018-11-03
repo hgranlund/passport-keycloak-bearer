@@ -1,0 +1,69 @@
+{
+  "name": "passport-keycloak-bearer",
+  "version": "0.0.1",
+  "description": "HTTP Bearer authentication strategy for Passport and Keycloak",
+  "keywords": [
+    "passport-keycloak-bearer",
+    " keycloak",
+    "passport",
+    "auth",
+    "oauth",
+    "bearer",
+    "authn",
+    "authentication",
+    "authz",
+    "authorization",
+    "http",
+    "bearer",
+    "token",
+    "oauth"
+  ],
+  "homepage": "https://github.com/hgranlund/passport-keycloak-bearer",
+  "bugs": {
+    "url": "https://github.com/hgranlund/passport-keycloak-bearer/issues",
+    "email": "simen@hgranlund.com"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Simen Haugerud Granlund",
+    "email": "simen@hgranlund.com",
+    "url": "https://hgranlund.com"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hgranlund/passport-keycloak-bearer"
+  },
+  "scripts": {
+    "build": "babel src -d lib",
+    "clean": "rimraf lib",
+    "lint": "npm run format && eslint ./",
+    "lint:fix": "npm run format && eslint --fix ./",
+    "format": "prettier --write ./src/**/*.js",
+    "prepublish": "npm run clean && npm run build",
+    "start": "babel-node src"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^9.0.0",
+    "babel-preset-everything": "^0.1.2",
+    "eslint": "^5.5.0",
+    "eslint-config-jam": "^0.1.2",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.1",
+    "rimraf": "^2.6.2"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "eslintIgnore": [
+    "lib"
+  ]
+}

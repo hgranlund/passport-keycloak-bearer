@@ -38,8 +38,8 @@ control.
           "host": "https://keycloak.dev.com",
           "clientId": "test-test"
       }),
-        function(token, done) {
-          const user = createUser(token);
+        function(verifiedToken, done) {
+          const user = createUser(verifiedToken);
           return done(null, user);
         }));
 

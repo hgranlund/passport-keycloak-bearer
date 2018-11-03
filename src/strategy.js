@@ -50,10 +50,10 @@ export default class KeycloakBearerStrategy extends Strategy {
         // console.log('access_token is received from request body');
       }
     }
-
     if (!token) {
-      return this.failWithLog('token is not found');
+      this.failWithLog('token is not found');
     }
+
     return token;
   }
 
@@ -63,19 +63,21 @@ export default class KeycloakBearerStrategy extends Strategy {
 
   authenticate(req) {
     const token = this.tokenFromReq(req);
-    this.verifyOnline(token)
-      .then((verifiedToken) => {
-        if (!verifiedToken) {
-          this.failWithLog('Unable to verify token');
-        } else {
-          this.userVerify(verifiedToken.content, this.success);
-        }
-      }).catch((error) => {
-        if (error.response) {
-          this.failWithLog(`Auth server returned: ${error.message}`);
-        } else {
-          this.failWithLog(error);
-        }
-      });
+    if (token) {
+      this.verifyOnline(token)
+        .then((verifiedToken) => {
+          if (!verifiedToken) {
+            this.failWithLog('Unable to verify token');
+          } else {
+            this.userVerify(verifiedToken.content, this.success);
+          }
+        }).catch((error) => {
+          if (error.response) {
+            this.failWithLog(`Auth server returned: ${error.message}`);
+          } else {
+            this.failWithLog(error);
+          }
+        });
+    }
   }
 }

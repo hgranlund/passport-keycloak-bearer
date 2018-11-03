@@ -1,10 +1,10 @@
 {
   "name": "passport-keycloak-bearer",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "HTTP Bearer authentication strategy for Passport and Keycloak",
   "keywords": [
     "passport-keycloak-bearer",
-    " keycloak",
+    "keycloak",
     "passport",
     "auth",
     "oauth",

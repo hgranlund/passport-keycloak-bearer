@@ -4,13 +4,7 @@ import keycloak from 'keycloak-backend';
 export default class KeycloakBearerStrategy extends Strategy {
   constructor(options, verify) {
     super();
-    if (typeof options === 'function') {
-      verify = options;
-      options = {};
-    }
-    if (!verify) { throw new TypeError('KeycloakBearerStrategy requires a verify callback'); }
-  
-    this.userVerify = verify;
+    this.userVerify = verify || this.success;
     this.options = options;
     this.keycloak = this.createKeycloak();
     this.name = 'keycloak';
@@ -20,7 +14,7 @@ export default class KeycloakBearerStrategy extends Strategy {
     return keycloak({
       realm: this.options.realm,
       'auth-server-url': this.options.host,
-      client_id: this.options.clientID
+      client_id: this.options.clientId
     });
   }
 

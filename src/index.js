@@ -1,5 +1,3 @@
-export default class Hello {
-  constructor(world) {
-    this.world = world;
-  }
-}
+import KeycloakBearerStrategy from './strategy';
+
+export default KeycloakBearerStrategy

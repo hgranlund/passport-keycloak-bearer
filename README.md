@@ -24,18 +24,26 @@ integrated into any application or framework that supports
 #### Configure Strategy
 
 The HTTP Bearer authentication strategy authenticates users using a bearer
-token.  The strategy requires a `verify` callback, which accepts that
+token.  The strategy has a optional `verify` callback, which accepts that
 credential and calls `done` providing a user.  Optional `info` can be passed,
 typically including associated scope, which will be set by Passport at
 `req.authInfo` to be used by later middleware for authorization and access
 control.
 
-    passport.use(new KeycloakBearerStrategy(
-      function(verifidToken, done) {
-        const user = createUser(verifidToken);
-        return done(null, user, { scope: 'all' });
-      }
-    ));
+      import KeycloakBearerStrategy from 'passport-keycloak-bearer'
+      ...
+
+      passport.use(new KeycloakBearerStrategy(({
+          "realm": "master",
+          "host": "https://keycloak.dev.com",
+          "clientId": "test-test"
+      }),
+        function(token, done) {
+          const user = createUser(token);
+          return done(null, user);
+        }));
+
+
 
 #### Authenticate Requests
 

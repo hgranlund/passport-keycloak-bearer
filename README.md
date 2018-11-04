@@ -1,7 +1,7 @@
 # passport-keycloak-bearer
 
 [![GitHub stars](https://img.shields.io/github/stars/hgranlund/passport-keycloak-bearer.svg?style=social&label=Stars)](https://github.com/hgranlund/passport-keycloak-bearer)
-
+[![Build](https://travis-ci.org/hgranlund/passport-keycloak-bearer.png)](http://travis-ci.org/hgranlund/passport-keycloak-bearer)
 > HTTP Bearer authentication strategy for [Passport](http://passportjs.org/) and [Keycloak](https://www.keycloak.org/).
 
 This module lets you authenticate HTTP requests using bearer tokens with a Keycloak authority, in your Node.js

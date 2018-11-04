@@ -1,6 +1,6 @@
 import { Strategy } from 'passport-strategy';
-import keycloak from 'keycloak-backend';
 import getLogger from './logging';
+import JwtVerification from './jwtVerification';
 
 const log = getLogger('Keycloak: Bearer strategy');
 
@@ -44,17 +44,9 @@ export default class KeycloakBearerStrategy extends Strategy {
 
     this.userVerify = verify || this.success;
     this.options = options;
-    this.keycloak = this.createKeycloak();
-    this.name = 'keycloak';
+    this.jwtVerification = new JwtVerification(this.options);
+    this.name = options.name || 'keycloak';
     this.log.debug('KeycloakBearerStrategy created');
-  }
-
-  createKeycloak() {
-    return keycloak({
-      realm: this.options.realm,
-      'auth-server-url': this.options.host,
-      client_id: this.options.clientId
-    });
   }
 
   failWithLog(message, status) {
@@ -119,10 +111,10 @@ export default class KeycloakBearerStrategy extends Strategy {
   }
 
   verifyOnline(token) {
-    return this.keycloak.jwt.verify(token);
+    return this.jwtVerification.verify(token);
   }
 
-  handleVerifiedToken(req, verifiedToken) {
+  handleVerifiedToken(req, verifiedToken, user) {
     if (!this.userVerify) {
       this.log.debug(
         'KeycloakBearerStrategy - Callback was not provided, calling success'
@@ -130,12 +122,12 @@ export default class KeycloakBearerStrategy extends Strategy {
       this.success(null, verifiedToken);
     } else if (this.options.passReqToCallback) {
       this.log.debug('KeycloakBearerStrategy - Passing req back to callback');
-      this.userVerify(req, verifiedToken.content, this.success);
+      this.userVerify(req, verifiedToken, user, this.success);
     } else {
       this.log.debug(
         'KeycloakBearerStrategy - We did not pass Req back to callback'
       );
-      this.userVerify(verifiedToken.content, this.success);
+      this.userVerify(verifiedToken, user, this.success);
     }
   }
 
@@ -144,11 +136,15 @@ export default class KeycloakBearerStrategy extends Strategy {
     if (!token) return;
 
     this.verifyOnline(token)
-      .then(verifiedToken => {
-        if (!verifiedToken) {
+      .then(verifiedContext => {
+        if (!verifiedContext) {
           this.failWithLog('Unable to verify token');
         } else {
-          this.handleVerifiedToken(req, verifiedToken);
+          this.handleVerifiedToken(
+            req,
+            verifiedContext.token,
+            verifiedContext.user
+          );
         }
       })
       .catch(error => {

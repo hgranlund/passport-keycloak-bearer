@@ -21,7 +21,8 @@ integrated into any application or framework that supports
 ## Usage
 
 KeycloakBearerStrategy uses Bearer Token protocol to protect web resource/api. It works in the following manner:
-User sends a request to the protected web api which contains an access_token in either the authorization header or body. Passport extracts and validates the access_token, and propagates the claims in access_token to the `verify` callback and let the framework finish the remaining authentication procedure.
+User sends a request to the protected web api which contains an access_token in either the authorization header or body. Passport extracts and validates the access_token, and propagates the claims in access_token and userProfile to the `verify` callback and let the framework finish the remaining authentication procedure.
+The userProfile parameter is the result of calling keycloak REST API (/realms/{realm-name}/protocol/openid-connect/userinfo).
 
 On successful authentication, passport adds the user information to `req.user` and passes it to the next middleware, which is usually the business logic of the web resource/api. In case of error, passport sends back an unauthorized response.
 
@@ -35,8 +36,8 @@ On successful authentication, passport adds the user information to `req.user` a
           "host": "https://keycloak.dev.com",
           "clientId": "test-test"
       }),
-        function(verifiedToken, done) {
-          const user = createUser(verifiedToken);
+        function(verifiedToken, userProfile, done) {
+          const user = doSomethingWithUser(userProfile);
           return done(null, user);
         }));
 

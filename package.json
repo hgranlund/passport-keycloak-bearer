@@ -1,6 +1,6 @@
 {
   "name": "passport-keycloak-bearer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "HTTP Bearer authentication strategy for Passport and Keycloak",
   "keywords": [
     "passport-keycloak-bearer",
@@ -47,8 +47,9 @@
     "start": "babel-node src"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bunyan": "^1.8.12",
-    "keycloak-backend": "^1.1.0",
+    "jsonwebtoken": "^8.3.0",
     "passport-strategy": "^1.0.0"
   },
   "devDependencies": {

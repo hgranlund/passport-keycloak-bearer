@@ -4,12 +4,23 @@ import getLogger from './logging';
 
 const log = getLogger('Keycloak: Bearer strategy')
 
+const verifyOptions = (options) => {
+  if (!options || typeof options !== 'object')
+    throw new Error('options is required');
+  if (!options.realm)
+    throw new Error('realm is required');
+  if (!options.clientId || options.clientID === '')
+    throw new Error('clientId cannot be empty');
+  if (!options.host || options.host === '')
+    throw new Error('host cannot be empty');
+}
+
 export default class KeycloakBearerStrategy extends Strategy {
   constructor(options, verify) {
     super();
+    verifyOptions(options);
 
     log.levels('console', options.loggingLevel || 'warn');
-
     this.userVerify = verify || this.success;
     this.options = options;
     this.keycloak = this.createKeycloak();
@@ -69,12 +80,15 @@ export default class KeycloakBearerStrategy extends Strategy {
   }
 
   handleVerifiedToken(req, verifiedToken) {
-    if (this.options.passReqToCallback) {
-      log.debug('We did pass Req back to Callback');
+    if (!this.userVerify) {
+      log.debug('Callback was not provided, calling success');
+      this.success(null, verifiedToken);
+    } else if (this.options.passReqToCallback) {
       this.userVerify(req, verifiedToken.content, this.success);
+    } else {
+      log.debug('We did not pass Req back to Callback');
+      this.userVerify(verifiedToken.content, this.success);
     }
-    log.debug('We did not pass Req back to Callback');
-    this.userVerify(verifiedToken.content, this.success);
   }
 
   authenticate(req) {

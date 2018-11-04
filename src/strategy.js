@@ -149,7 +149,7 @@ export default class KeycloakBearerStrategy extends Strategy {
       })
       .catch(error => {
         if (error.response) {
-          this.failWithLog(`Auth server gave us a  "${error.message}"`);
+          this.failWithLog(`token is not valid`);
         } else {
           this.failWithLog(error);
         }

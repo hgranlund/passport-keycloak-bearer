@@ -47,6 +47,7 @@
     "start": "babel-node src"
   },
   "dependencies": {
+    "bunyan": "^1.8.12",
     "keycloak-backend": "^1.1.0",
     "passport-strategy": "^1.0.0"
   },

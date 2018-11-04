@@ -1,13 +1,20 @@
 import { Strategy } from 'passport-strategy';
 import keycloak from 'keycloak-backend';
+import getLogger from './logging';
+
+const log = getLogger('Keycloak: Bearer strategy')
 
 export default class KeycloakBearerStrategy extends Strategy {
   constructor(options, verify) {
     super();
+
+    log.levels('console', options.loggingLevel || 'warn');
+
     this.userVerify = verify || this.success;
     this.options = options;
     this.keycloak = this.createKeycloak();
     this.name = 'keycloak';
+    log.debug('Strategy created');
   }
 
   createKeycloak() {
@@ -19,7 +26,7 @@ export default class KeycloakBearerStrategy extends Strategy {
   }
 
   failWithLog(message) {
-    // console.log(`Authentication failed due to: ${message}`);
+    log.warn(`Authentication failed due to: ${message}`);
     return this.fail(message);
   }
 
@@ -34,7 +41,7 @@ export default class KeycloakBearerStrategy extends Strategy {
       if (authComponents.length === 2 && authComponents[0].toLowerCase() === 'bearer') {
         [, token] = authComponents;
         if (token !== '') {
-          // console.log('access_token is received from request header');
+          log.debug('access_token is received from request header');
         } else {
           this.failWithLog('missing access_token in the header');
         }
@@ -47,7 +54,7 @@ export default class KeycloakBearerStrategy extends Strategy {
       }
       token = req.body.access_token;
       if (token) {
-        // console.log('access_token is received from request body');
+        log.debug('access_token is received from request body');
       }
     }
     if (!token) {
@@ -61,6 +68,15 @@ export default class KeycloakBearerStrategy extends Strategy {
     return this.keycloak.jwt.verify(token);
   }
 
+  handleVerifiedToken(req, verifiedToken) {
+    if (this.options.passReqToCallback) {
+      log.debug('We did pass Req back to Callback');
+      this.userVerify(req, verifiedToken.content, this.success);
+    }
+    log.debug('We did not pass Req back to Callback');
+    this.userVerify(verifiedToken.content, this.success);
+  }
+
   authenticate(req) {
     const token = this.tokenFromReq(req);
     if (token) {
@@ -69,11 +85,11 @@ export default class KeycloakBearerStrategy extends Strategy {
           if (!verifiedToken) {
             this.failWithLog('Unable to verify token');
           } else {
-            this.userVerify(verifiedToken.content, this.success);
+            this.handleVerifiedToken(req, verifiedToken);
           }
         }).catch((error) => {
           if (error.response) {
-            this.failWithLog(`Auth server returned: ${error.message}`);
+            this.failWithLog(`Auth server gave us a: ${error.message}`);
           } else {
             this.failWithLog(error);
           }

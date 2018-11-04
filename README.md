@@ -20,15 +20,12 @@ integrated into any application or framework that supports
 
 ## Usage
 
+KeycloakBearerStrategy uses Bearer Token protocol to protect web resource/api. It works in the following manner:
+User sends a request to the protected web api which contains an access_token in either the authorization header or body. Passport extracts and validates the access_token, and propagates the claims in access_token to the `verify` callback and let the framework finish the remaining authentication procedure.
 
-#### Configure Strategy
+On successful authentication, passport adds the user information to `req.user` and passes it to the next middleware, which is usually the business logic of the web resource/api. In case of error, passport sends back an unauthorized response.
 
-The HTTP Bearer authentication strategy authenticates users using a bearer
-token.  The strategy has a optional `verify` callback, which accepts that
-credential and calls `done` providing a user.  Optional `info` can be passed,
-typically including associated scope, which will be set by Passport at
-`req.authInfo` to be used by later middleware for authorization and access
-control.
+#### Sample usage
 
       import KeycloakBearerStrategy from 'passport-keycloak-bearer'
       ...
@@ -43,6 +40,28 @@ control.
           return done(null, user);
         }));
 
+##### 5.1.1.2 Options
+
+* `host` (Required)
+
+  The endpoint where Keykloak is running.
+
+* `clientId` (Required)
+
+  The client ID of your application.
+
+* `realm` (Required)
+
+  Your realm name.
+  
+* `passReqToCallback`  (Optional - Default: false)
+
+  Whether you want to use `req` as the first parameter in the verify callback. See section 5.1.1.3 for more details.
+
+
+* `loggingLevel`  (Optional - Default: 'warn') 
+
+  Logging level. 'info', 'warn' or 'error'.
 
 
 #### Authenticate Requests

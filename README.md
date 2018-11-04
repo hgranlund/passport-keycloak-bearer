@@ -58,10 +58,13 @@ On successful authentication, passport adds the user information to `req.user` a
 
   Whether you want to use `req` as the first parameter in the verify callback. See section 5.1.1.3 for more details.
 
-
 * `loggingLevel`  (Optional - Default: 'warn') 
 
-  Logging level. 'info', 'warn' or 'error'.
+  Logging level. 'debug', 'info', 'warn' or 'error'.
+
+* `customLogger`  (Optional)
+
+  Custom logging instance. It must be able to log the following types: 'debug', 'info', 'warn' and 'error'.
 
 
 #### Authenticate Requests

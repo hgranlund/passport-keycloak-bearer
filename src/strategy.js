@@ -6,26 +6,39 @@ const log = getLogger('Keycloak: Bearer strategy')
 
 const verifyOptions = (options) => {
   if (!options || typeof options !== 'object')
-    throw new Error('options is required');
+  throw new Error('KeycloakBearerStrategy: options is required');
   if (!options.realm)
-    throw new Error('realm is required');
+  throw new Error('KeycloakBearerStrategy: realm is required');
   if (!options.clientId || options.clientID === '')
-    throw new Error('clientId cannot be empty');
+  throw new Error('KeycloakBearerStrategy: clientId cannot be empty');
   if (!options.host || options.host === '')
-    throw new Error('host cannot be empty');
+  throw new Error('KeycloakBearerStrategy: host cannot be empty');
+  if(options.customLogger){
+    if(typeof options.customLogger.error !== 'function')
+      throw new Error('KeycloakBearerStrategy: customLogger must have a error function');
+    if(typeof options.customLogger.warn !== 'function')
+      throw new Error('KeycloakBearerStrategy: customLogger must have a warn function');
+    if(typeof options.customLogger.info !== 'function')
+      throw new Error('KeycloakBearerStrategy: customLogger must have a info function');
+    if(typeof options.customLogger.debug !== 'function')
+      throw new Error('KeycloakBearerStrategy: customLogger must have a debug function');
+  }
 }
 
 export default class KeycloakBearerStrategy extends Strategy {
   constructor(options, verify) {
     super();
     verifyOptions(options);
+    
+    this.log = log;
+    this.log.levels('console', options.loggingLevel || 'warn');
+    this.log = options.customLogger? options.customLogger: log;
 
-    log.levels('console', options.loggingLevel || 'warn');
     this.userVerify = verify || this.success;
     this.options = options;
     this.keycloak = this.createKeycloak();
     this.name = 'keycloak';
-    log.debug('Strategy created');
+    this.log.debug('KeycloakBearerStrategy created');
   }
 
   createKeycloak() {
@@ -37,7 +50,7 @@ export default class KeycloakBearerStrategy extends Strategy {
   }
 
   failWithLog(message) {
-    log.warn(`Authentication failed due to: ${message}`);
+    this.log.warn(`KeycloakBearerStrategy - Authentication failed due to: ${message}`);
     return this.fail(message);
   }
 
@@ -52,7 +65,7 @@ export default class KeycloakBearerStrategy extends Strategy {
       if (authComponents.length === 2 && authComponents[0].toLowerCase() === 'bearer') {
         [, token] = authComponents;
         if (token !== '') {
-          log.debug('access_token is received from request header');
+          this.log.debug('KeycloakBearerStrategy - access_token is received from request header');
         } else {
           this.failWithLog('missing access_token in the header');
         }
@@ -65,7 +78,7 @@ export default class KeycloakBearerStrategy extends Strategy {
       }
       token = req.body.access_token;
       if (token) {
-        log.debug('access_token is received from request body');
+        this.log.debug('KeycloakBearerStrategy - access_token is received from request body');
       }
     }
     if (!token) {
@@ -81,12 +94,12 @@ export default class KeycloakBearerStrategy extends Strategy {
 
   handleVerifiedToken(req, verifiedToken) {
     if (!this.userVerify) {
-      log.debug('Callback was not provided, calling success');
+      this.log.debug('KeycloakBearerStrategy - Callback was not provided, calling success');
       this.success(null, verifiedToken);
     } else if (this.options.passReqToCallback) {
       this.userVerify(req, verifiedToken.content, this.success);
     } else {
-      log.debug('We did not pass Req back to Callback');
+      this.log.debug('KeycloakBearerStrategy - We did not pass Req back to callback');
       this.userVerify(verifiedToken.content, this.success);
     }
   }
@@ -103,7 +116,7 @@ export default class KeycloakBearerStrategy extends Strategy {
           }
         }).catch((error) => {
           if (error.response) {
-            this.failWithLog(`Auth server gave us a: ${error.message}`);
+            this.failWithLog(`Auth server gave us a  "${error.message}"`);
           } else {
             this.failWithLog(error);
           }

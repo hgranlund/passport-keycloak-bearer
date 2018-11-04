@@ -1,3 +1,3 @@
 import KeycloakBearerStrategy from './strategy';
 
-export default KeycloakBearerStrategy
+export default KeycloakBearerStrategy;

@@ -2,9 +2,9 @@ import { Strategy } from 'passport-strategy';
 import keycloak from 'keycloak-backend';
 import getLogger from './logging';
 
-const log = getLogger('Keycloak: Bearer strategy')
+const log = getLogger('Keycloak: Bearer strategy');
 
-const verifyOptions = (options) => {
+const verifyOptions = options => {
   if (!options || typeof options !== 'object')
     throw new Error('KeycloakBearerStrategy: options is required');
   if (!options.realm)
@@ -15,15 +15,23 @@ const verifyOptions = (options) => {
     throw new Error('KeycloakBearerStrategy: host cannot be empty');
   if (options.customLogger) {
     if (typeof options.customLogger.error !== 'function')
-      throw new Error('KeycloakBearerStrategy: customLogger must have a error function');
+      throw new Error(
+        'KeycloakBearerStrategy: customLogger must have a error function'
+      );
     if (typeof options.customLogger.warn !== 'function')
-      throw new Error('KeycloakBearerStrategy: customLogger must have a warn function');
+      throw new Error(
+        'KeycloakBearerStrategy: customLogger must have a warn function'
+      );
     if (typeof options.customLogger.info !== 'function')
-      throw new Error('KeycloakBearerStrategy: customLogger must have a info function');
+      throw new Error(
+        'KeycloakBearerStrategy: customLogger must have a info function'
+      );
     if (typeof options.customLogger.debug !== 'function')
-      throw new Error('KeycloakBearerStrategy: customLogger must have a debug function');
+      throw new Error(
+        'KeycloakBearerStrategy: customLogger must have a debug function'
+      );
   }
-}
+};
 
 export default class KeycloakBearerStrategy extends Strategy {
   constructor(options, verify) {
@@ -50,22 +58,31 @@ export default class KeycloakBearerStrategy extends Strategy {
   }
 
   failWithLog(message) {
-    this.log.warn(`KeycloakBearerStrategy - Authentication failed due to: ${message}`);
+    this.log.warn(
+      `KeycloakBearerStrategy - Authentication failed due to: ${message}`
+    );
     return this.fail(message);
   }
 
   tokenFromReq(req) {
     if (req.query && req.query.access_token) {
-      return this.failWithLog('access_token should be passed in request header or body. query is unsupported');
+      return this.failWithLog(
+        'access_token should be passed in request header or body. query is unsupported'
+      );
     }
 
     let token;
     if (req.headers && req.headers.authorization) {
       const authComponents = req.headers.authorization.split(' ');
-      if (authComponents.length === 2 && authComponents[0].toLowerCase() === 'bearer') {
+      if (
+        authComponents.length === 2 &&
+        authComponents[0].toLowerCase() === 'bearer'
+      ) {
         [, token] = authComponents;
         if (token !== '') {
-          this.log.debug('KeycloakBearerStrategy - access_token is received from request header');
+          this.log.debug(
+            'KeycloakBearerStrategy - access_token is received from request header'
+          );
         } else {
           this.failWithLog('missing access_token in the header');
         }
@@ -74,11 +91,15 @@ export default class KeycloakBearerStrategy extends Strategy {
 
     if (req.body && req.body.access_token) {
       if (token) {
-        return this.failWithLog('access_token cannot be passed in both request header and body');
+        return this.failWithLog(
+          'access_token cannot be passed in both request header and body'
+        );
       }
       token = req.body.access_token;
       if (token) {
-        this.log.debug('KeycloakBearerStrategy - access_token is received from request body');
+        this.log.debug(
+          'KeycloakBearerStrategy - access_token is received from request body'
+        );
       }
     }
     if (!token) {
@@ -94,12 +115,17 @@ export default class KeycloakBearerStrategy extends Strategy {
 
   handleVerifiedToken(req, verifiedToken) {
     if (!this.userVerify) {
-      this.log.debug('KeycloakBearerStrategy - Callback was not provided, calling success');
+      this.log.debug(
+        'KeycloakBearerStrategy - Callback was not provided, calling success'
+      );
       this.success(null, verifiedToken);
     } else if (this.options.passReqToCallback) {
+      this.log.debug('KeycloakBearerStrategy - Passing req back to callback');
       this.userVerify(req, verifiedToken.content, this.success);
     } else {
-      this.log.debug('KeycloakBearerStrategy - We did not pass Req back to callback');
+      this.log.debug(
+        'KeycloakBearerStrategy - We did not pass Req back to callback'
+      );
       this.userVerify(verifiedToken.content, this.success);
     }
   }
@@ -109,13 +135,14 @@ export default class KeycloakBearerStrategy extends Strategy {
     if (!token) return;
 
     this.verifyOnline(token)
-      .then((verifiedToken) => {
+      .then(verifiedToken => {
         if (!verifiedToken) {
           this.failWithLog('Unable to verify token');
         } else {
           this.handleVerifiedToken(req, verifiedToken);
         }
-      }).catch((error) => {
+      })
+      .catch(error => {
         if (error.response) {
           this.failWithLog(`Auth server gave us a  "${error.message}"`);
         } else {

@@ -52,6 +52,7 @@
     "passport-strategy": "^1.0.0"
   },
   "devDependencies": {
+    "eslint-plugin-jsx-a11y": "^6.1.2",
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",

@@ -57,21 +57,16 @@ export default class KeycloakBearerStrategy extends Strategy {
     });
   }
 
-  failWithLog(message) {
+  failWithLog(message, status) {
     this.log.warn(
       `KeycloakBearerStrategy - Authentication failed due to: ${message}`
     );
-    return this.fail(message);
+    return this.fail(message, status);
   }
 
   tokenFromReq(req) {
-    if (req.query && req.query.access_token) {
-      return this.failWithLog(
-        'access_token should be passed in request header or body. query is unsupported'
-      );
-    }
-
     let token;
+
     if (req.headers && req.headers.authorization) {
       const authComponents = req.headers.authorization.split(' ');
       if (
@@ -92,7 +87,8 @@ export default class KeycloakBearerStrategy extends Strategy {
     if (req.body && req.body.access_token) {
       if (token) {
         return this.failWithLog(
-          'access_token cannot be passed in both request header and body'
+          'access_token cannot be passed in both request header and body',
+          400
         );
       }
       token = req.body.access_token;
@@ -102,6 +98,19 @@ export default class KeycloakBearerStrategy extends Strategy {
         );
       }
     }
+
+    if (req.query && req.query.access_token) {
+      if (token) {
+        return this.fail('received multiple tokens', 400);
+      }
+      token = req.query.access_token;
+      if (token) {
+        this.log.debug(
+          'KeycloakBearerStrategy - access_token is received from query'
+        );
+      }
+    }
+
     if (!token) {
       this.failWithLog('token is not found');
     }

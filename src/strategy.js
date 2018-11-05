@@ -122,13 +122,29 @@ export default class KeycloakBearerStrategy extends Strategy {
       this.success(null, verifiedToken);
     } else if (this.options.passReqToCallback) {
       this.log.debug('KeycloakBearerStrategy - Passing req back to callback');
-      this.userVerify(req, verifiedToken, user, this.success);
+      this.userVerify(req, verifiedToken, user, this.verified);
     } else {
       this.log.debug(
         'KeycloakBearerStrategy - We did not pass Req back to callback'
       );
-      this.userVerify(verifiedToken, user, this.success);
+      this.userVerify(verifiedToken, user, this.verified);
     }
+  }
+
+  verified(err, user, info) {
+    if (err)
+      return this.error(err);
+
+    if (!user) {
+      let msg = 'error: invalid_token';
+      if (info && typeof info === 'string')
+        msg += `, error description: ${  info}`;
+      else if (info)
+        msg += `, error description: ${  JSON.stringify(info)}`;
+      return this.failWithLog(msg);
+    }
+
+    return this.success(user, info);
   }
 
   authenticate(req) {

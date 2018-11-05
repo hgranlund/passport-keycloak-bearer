@@ -109,7 +109,7 @@ export default class KeycloakBearerStrategy extends Strategy {
 
     return token;
   }
-
+  
   verifyOnline(token) {
     return this.jwtVerification.verify(token);
   }
@@ -130,6 +130,13 @@ export default class KeycloakBearerStrategy extends Strategy {
       this.userVerify(verifiedToken, user, this.success);
     }
   }
+  handleErrorFromOnlineVerification(data) {
+    if (data.error) {
+      this.failWithLog(`keycloak responded with "${data.error} - ${data.error_description}"`);
+    } else {
+      this.failWithLog('unable to verify token');
+    }
+  }
 
   authenticate(req) {
     const token = this.tokenFromReq(req);
@@ -148,8 +155,8 @@ export default class KeycloakBearerStrategy extends Strategy {
         }
       })
       .catch(error => {
-        if (error.response) {
-          this.failWithLog(`token is not valid`);
+        if (error.response && error.response.data) {
+          this.handleErrorFromOnlineVerification(error.response.data);
         } else {
           this.failWithLog(error);
         }

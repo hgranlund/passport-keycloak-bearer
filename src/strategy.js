@@ -1,51 +1,19 @@
 import { Strategy } from 'passport-strategy';
-import simpleLogger from 'simple-node-logger';
+import KeyCloakCerts from 'get-keycloak-public-key';
 import JwtVerification from './jwtVerification';
-
-const log = simpleLogger.createSimpleLogger();
-
-const verifyOptions = options => {
-  if (!options || typeof options !== 'object')
-    throw new Error('KeycloakBearerStrategy: options is required');
-  if (!options.realm)
-    throw new Error('KeycloakBearerStrategy: realm is required');
-  if (!options.clientId || options.clientID === '')
-    throw new Error('KeycloakBearerStrategy: clientId cannot be empty');
-  if (!options.host || options.host === '')
-    throw new Error('KeycloakBearerStrategy: host cannot be empty');
-  if (options.customLogger) {
-    if (typeof options.customLogger.error !== 'function')
-      throw new Error(
-        'KeycloakBearerStrategy: customLogger must have a error function'
-      );
-    if (typeof options.customLogger.warn !== 'function')
-      throw new Error(
-        'KeycloakBearerStrategy: customLogger must have a warn function'
-      );
-    if (typeof options.customLogger.info !== 'function')
-      throw new Error(
-        'KeycloakBearerStrategy: customLogger must have a info function'
-      );
-    if (typeof options.customLogger.debug !== 'function')
-      throw new Error(
-        'KeycloakBearerStrategy: customLogger must have a debug function'
-      );
-  }
-};
+import {verifyOptions, setDefaults} from './options';
 
 export default class KeycloakBearerStrategy extends Strategy {
   constructor(options, verify) {
     super();
     verifyOptions(options);
-
-    this.log = log;
-    this.log.setLevel(options.loggingLevel || 'warn');
-    this.log = options.customLogger ? options.customLogger : log;
-
+    this.options = setDefaults(options);
+    this.log = this.options.log;
     this.userVerify = verify || this.success;
-    this.options = options;
+    
     this.jwtVerification = new JwtVerification(this.options);
-    this.name = options.name || 'keycloak';
+    this.keyCloakCerts = new KeyCloakCerts(this.options.host, this.options.realm);
+    
     this.log.debug('KeycloakBearerStrategy created');
   }
 

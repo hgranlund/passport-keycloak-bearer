@@ -1,11 +1,19 @@
 export default class Token {
   constructor(token) {
     this.token = token;
-    const [headerPart, contentPat, signaturePart] = token.split('.');
-    this.header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
-    this.content = JSON.parse(Buffer.from(contentPat, 'base64').toString());
-    this.signature = Buffer.from(signaturePart, 'base64');
-    this.signed = `${headerPart}.${contentPat}`;
+    this.decrypt(token);
+  }
+
+  decrypt(token) {
+    try {
+      const [headerPart, contentPat, signaturePart] = token.split('.');
+      this.header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
+      this.content = JSON.parse(Buffer.from(contentPat, 'base64').toString());
+      this.signature = Buffer.from(signaturePart, 'base64');
+      this.signed = `${headerPart}.${contentPat}`;
+    } catch (error) {
+      throw new Error('Token is malformed');
+    }
   }
 
   isExpired() {

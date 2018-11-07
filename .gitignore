@@ -42,3 +42,8 @@ node_modules
 
 # application
 /lib
+
+build
+reports
+
+.nyc_output

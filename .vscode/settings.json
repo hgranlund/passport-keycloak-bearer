@@ -1,0 +1,8 @@
+{    
+"mocha.requires": [
+    "@babel/register",
+    "./test/bootstrap/node",
+],
+"mocha.files.glob": "./test/*.test.js",
+"mocha.runTestsOnSave": "true"
+}

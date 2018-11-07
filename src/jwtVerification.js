@@ -3,32 +3,37 @@ import jwt from 'jsonwebtoken';
 import Token from './token';
 
 export default class JwtVerification {
-  constructor(config) {
-    this.config = config;
+  constructor(options) {
+    this.options = options;
     this.request = axios.create({
-      baseURL: config.host
+      baseURL: options.host,
     });
   }
 
-  verifyOffline(accessToken, cert, options = {}) {
+  verifyOffline(accessToken, options = {}) {
     return new Promise((resolve, reject) => {
-      jwt.verify(accessToken, cert, options, err => {
+      jwt.verify(accessToken, this.cert, options, (err) => {
         if (err) reject(err);
         resolve(new Token(accessToken));
       });
     });
   }
 
-  async verify(accessToken) {
-    const userResponse = await this.request.get(
-      `/auth/realms/${this.config.realm}/protocol/openid-connect/userinfo`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }
-    );
-
-    return { token: new Token(accessToken), user: userResponse.data };
+  verify(accessToken) {
+    return new Promise((resolve, reject) => {
+      this.request.get(
+        `/auth/realms/${this.options.realm}/protocol/openid-connect/userinfo`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      ).then(() => {
+        const token = new Token(accessToken);
+        resolve(token);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
   }
 }

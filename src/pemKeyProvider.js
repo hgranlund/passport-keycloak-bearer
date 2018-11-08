@@ -24,6 +24,7 @@ const getPemKey = jwksUrl => new Promise((resolve, reject) => {
   });
 });
 
-export default jwksUrl => (req, token, done) => {
+export default (host, realm) => (req, token, done) => {
+  const jwksUrl = `${host}/auth/realms/${realm}/protocol/openid-connect/certs`;
   getPemKey(jwksUrl).then(pemKey => done(null, pemKey));
 };

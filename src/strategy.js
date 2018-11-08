@@ -14,11 +14,12 @@ export default class KeycloakBearerStrategy extends Strategy {
     verifyOptions(options);
     const opts = setDefaults(options);
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-    // opts.secretOrKey = 'secret';
-    opts.secretOrKeyProvider = pemKeyProvider('http://localhost:8080/auth/realms/master/protocol/openid-connect/certs');
+    opts.secretOrKeyProvider = pemKeyProvider(opts.host, opts.realm);
     super(opts, verify || defaultVerify);
     this.log = opts.log;
     this.name = opts.name;
+    this.superFail = this.fail;
+    this.superAuthenticate = this.authenticate;
     this.log.debug('KeycloakBearerStrategy created');
   }
 }

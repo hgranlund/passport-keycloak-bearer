@@ -27,10 +27,4 @@ describe('KeycloakBearerStrategy', () => {
       new KeycloakBearerStrategy({ host: 'host', clientId: 'clientId' });
     }).to.throw(TypeError, 'KeycloakBearerStrategy: realm cannot be empty');
   });
-
-  it('should throw if constructed with options without realm', () => {
-    expect(() => {
-      new KeycloakBearerStrategy({ realm: 'realm', host: 'host' });
-    }).to.throw(TypeError, 'KeycloakBearerStrategy: clientId cannot be empty');
-  });
 });

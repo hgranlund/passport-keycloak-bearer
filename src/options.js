@@ -1,10 +1,15 @@
 import simpleLogger from 'simple-node-logger';
 
 export const verifyOptions = (options) => {
-  if (!options || typeof options !== 'object') { throw new TypeError('KeycloakBearerStrategy: options is required'); }
-  if (!options.realm) { throw new TypeError('KeycloakBearerStrategy: realm cannot be empty'); }
-  if (!options.clientId || options.clientID === '') { throw new TypeError('KeycloakBearerStrategy: clientId cannot be empty'); }
-  if (!options.host || options.host === '') { throw new TypeError('KeycloakBearerStrategy: host cannot be empty'); }
+  if (!options || typeof options !== 'object') {
+    throw new TypeError('KeycloakBearerStrategy: options is required');
+  }
+  if (!options.realm) {
+    throw new TypeError('KeycloakBearerStrategy: realm cannot be empty');
+  }
+  if (!options.host || options.host === '') {
+    throw new TypeError('KeycloakBearerStrategy: host cannot be empty');
+  }
   if (options.customLogger) {
     if (typeof options.customLogger.error !== 'function') {
       throw new TypeError(

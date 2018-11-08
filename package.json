@@ -40,18 +40,15 @@
   "scripts": {
     "build": "babel src -d lib",
     "clean": "rimraf lib",
-    "lint": "npm run format && eslint ./",
-    "lint:fix": "npm run format && eslint --fix ./",
-    "format": "prettier --write ./src/**/*.js",
+    "lint": "eslint ./src --fix",
     "prepublish": "npm run clean && npm run build",
     "test": "node_modules/.bin/mocha -r @babel/register --reporter spec --require test/bootstrap/node test/*.test.js",
     "start": "babel-node src"
   },
   "dependencies": {
     "axios": "0.19.0-beta.1",
-    "jsonwebtoken": "^8.3.0",
-    "nock": "^10.0.2",
-    "passport-strategy": "^1.0.0",
+    "passport-jwt": "^4.0.0",
+    "request": "^2.88.0",
     "simple-node-logger": "^0.93.40"
   },
   "devDependencies": {
@@ -69,6 +66,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-mocha": "^5.2.0",
     "mocha": "^5.2.0",
+    "nock": "^10.0.2",
     "prettier": "^1.14.3",
     "prettier-eslint": "^8.8.2",
     "rimraf": "^2.6.2"

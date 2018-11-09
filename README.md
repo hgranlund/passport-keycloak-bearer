@@ -21,45 +21,44 @@ integrated into any application or framework that supports
 ## Usage
 
 KeycloakBearerStrategy uses Bearer Token protocol to protect web resource/api. It works in the following manner:
-User sends a request to the protected web api which contains an access_token in either the authorization header or body. Passport extracts and validates the access_token, and propagates the claims in access_token and userProfile to the `verify` callback and let the framework finish the remaining authentication procedure.
-The userProfile parameter is the result of calling keycloak REST API (/realms/{realm-name}/protocol/openid-connect/userinfo).
+User sends a request to the protected web api which contains an access_token in either the authorization header or body. Passport extracts and validates the access_token, and propagates the claims in access_token to the `verify` callback and let the framework finish the remaining authentication procedure.
 
 On successful authentication, passport adds the user information to `req.user` and passes it to the next middleware, which is usually the business logic of the web resource/api. In case of error, passport sends back an unauthorized response.
 
 #### Sample usage
 
+```js
       import KeycloakBearerStrategy from 'passport-keycloak-bearer'
       ...
-
+      // new KeycloakBearerStrategy(options, verify)
       passport.use(new KeycloakBearerStrategy(({
           "realm": "master",
-          "host": "https://keycloak.dev.com",
-          "clientId": "test-test"
-      }),
-        function(verifiedToken, userProfile, done) {
-          const user = doSomethingWithUser(userProfile);
+          "host": "https://keycloak.dev.com"
+      }, (jwtPayload, done) => {
+          const user = doSomethingWithUser(jwtPayload);
           return done(null, user);
-        }));
+      }));
+```
+The JWT authentication strategy is constructed as follows:
 
-##### 5.1.1.2 Options
+    new KeycloakBearerStrategy(options, verify)
+
+
+##### Options
 
 * `host` (Required)
 
-  The endpoint where Keykloak is running.
-
-* `clientId` (Required)
-
-  The client ID of your application.
+  Keycloak url. For instance: [https://keycloak.dev.org/].
 
 * `realm` (Required)
 
-  Your realm name.
+  Your realm.
   
 * `passReqToCallback`  (Optional - Default: false)
 
   Whether you want to use `req` as the first parameter in the verify callback. See section 5.1.1.3 for more details.
 
-* `loggingLevel`  (Optional - Default: 'warn') 
+* `loggingLevel`  (Optional - Default: 'warn')
 
   Logging level. 'debug', 'info', 'warn' or 'error'.
 
@@ -67,22 +66,54 @@ On successful authentication, passport adds the user information to `req.user` a
 
   Custom logging instance. It must be able to log the following types: 'debug', 'info', 'warn' and 'error'.
 
+* `issuer` (Optional)
+
+  If defined the token issuer (iss) will be verified against this
+  value.
+
+* `audience` (Optional)
+
+  If defined, the token audience (aud) will be verified against
+  this value.
+
+* `algorithms` (Optional - Default: ['HS256'])
+
+  List of strings with the names of the allowed algorithms. For instance, ["HS256", "HS384"].
+
+* `ignoreExpiration` (Optional)
+
+  If true do not validate the expiration of the token.
+
+* `jsonWebTokenOptions` (Optional)
+
+  passport-keycloak-bearer is verifying the token using [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken). 
+  Pass here an options object for any other option you can pass the jsonwebtoken verifier. (i.e maxAge)
+
+
+##### Verify callback
+
+`verify` is a function with the parameters `verify(jwtPayload, done)`
+
+* `jwtPayload` is an object literal containing the decoded JWT payload.
+* `done` is a passport error first callback accepting arguments
+  done(error, user, info)
+
 
 #### Authenticate Requests
 
 Use `passport.authenticate()`, specifying the `'keycloak'` strategy, to
-authenticate requests.  Requests containing bearer verifidT do not require session
-support, so the `session` option can be set to `false`.
+authenticate requests.  Requests containing bearer verified do not require session support, so the `session` option can be set to `false`.
 
 For example, as route middleware in an [Express](http://expressjs.com/)
 application:
 
-    app.get('/profile', 
+```js
+    app.get('/path',
       passport.authenticate('keycloak', { session: false }),
       function(req, res) {
         res.json(req.user);
       });
-
+```
 
 ## Support
 

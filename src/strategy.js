@@ -1,10 +1,10 @@
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { verifyOptions, setDefaults } from './options';
-import pemKeyProvider from './pemKeyProvider';
+import OIDCManager from './oidcMatadata';
 
-const defaultVerify = (verifidToken, done) => {
-  if (verifidToken) {
-    return done(null, verifidToken);
+const defaultVerify = (jwtPayload, done) => {
+  if (jwtPayload) {
+    return done(null, jwtPayload);
   }
   return done(null, false);
 };
@@ -14,12 +14,12 @@ export default class KeycloakBearerStrategy extends Strategy {
     verifyOptions(options);
     const opts = setDefaults(options);
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-    opts.secretOrKeyProvider = pemKeyProvider(opts.host, opts.realm);
+    const oidcManager = new OIDCManager(opts.host, opts.realm, opts.log);
+    opts.secretOrKeyProvider = (req, token, done) => {
+      oidcManager.pemKeyFromToken(token, done);
+    };
     super(opts, verify || defaultVerify);
-    this.log = opts.log;
     this.name = opts.name;
-    this.superFail = this.fail;
-    this.superAuthenticate = this.authenticate;
-    this.log.debug('KeycloakBearerStrategy created');
+    opts.log.debug('Strategy created');
   }
 }

@@ -1,4 +1,4 @@
-import simpleLogger from 'simple-node-logger';
+import { createLogManager } from 'simple-node-logger';
 
 export const verifyOptions = (options) => {
   if (!options || typeof options !== 'object') {
@@ -34,19 +34,18 @@ export const verifyOptions = (options) => {
   }
 };
 
-export const setDefaults = (options) => {
-  const opt = {
-    ...options,
-    name: options.name || 'keycloak',
-    loggingLevel: options.loggingLevel || 'warn',
-  };
-
+const getLogger = (options) => {
   if (options.customLogger) {
-    opt.log = options.customLogger;
-  } else {
-    opt.log = simpleLogger.createSimpleLogger();
-    opt.log.setLevel(opt.loggingLevel);
+    return options.customLogger;
   }
 
-  return opt;
+  const log = createLogManager().createLogger('KeycloakBearerStrategy -');
+  log.setLevel(options.loggingLevel || 'warn');
+  return log;
 };
+
+export const setDefaults = options => ({
+  ...options,
+  name: options.name || 'keycloak',
+  log: getLogger(options),
+});

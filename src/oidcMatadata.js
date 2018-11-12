@@ -6,7 +6,9 @@ export default class OIDCMatadata {
   constructor(host, realm, log) {
     this.log = log;
     this.jwksUrl = `${host}/auth/realms/${realm}/protocol/openid-connect/certs`;
-    this.keys = this.getPemKeys();
+    this.keys = this.getPemKeys().catch((err) => {
+      this.log.warn(err.message);
+    });
   }
 
   getPemKeys() {

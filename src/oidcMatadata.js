@@ -44,7 +44,7 @@ export default class OIDCMatadata {
         const keyforToken = keys.find(key => key.kid === token.header.kid);
         if (!keyforToken) {
           const err = new Error(`No key matching kid ${token.header.kid}`);
-          this.log.warn(err);
+          this.log.warn(err.message);
           done(err);
         } else {
           done(null, keyforToken.pemKey);

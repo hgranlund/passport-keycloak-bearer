@@ -1,3 +1,3 @@
-import KeycloakBearerStrategy from './strategy';
+const KeycloakBearerStrategy = require('./strategy')
 
-export default KeycloakBearerStrategy;
+module.exports = KeycloakBearerStrategy

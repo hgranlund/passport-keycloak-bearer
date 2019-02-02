@@ -1,6 +1,6 @@
-import { use, expect } from 'chai';
-import passport from 'chai-passport-strategy';
+const { use, expect } = require('chai')
+const passport = require('chai-passport-strategy')
 
-use(passport);
+use(passport)
 
-global.expect = expect;
+global.expect = expect

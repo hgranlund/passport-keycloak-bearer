@@ -30,20 +30,17 @@
     "url": "https://hgranlund.com"
   },
   "files": [
-    "lib"
+    "src"
   ],
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/hgranlund/passport-keycloak-bearer"
   },
   "scripts": {
-    "build": "babel src -d lib",
-    "clean": "rimraf lib",
-    "lint": "eslint ./src --fix",
-    "prepublish": "npm run clean && npm run build",
-    "test": "node_modules/.bin/mocha -r @babel/register --reporter spec --require test/bootstrap/node test/*.test.js",
-    "start": "babel-node src"
+    "lint": "eslint ./src ./test --fix",
+    "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js",
+    "start": "node src"
   },
   "dependencies": {
     "axios": "0.19.0-beta.1",
@@ -52,19 +49,15 @@
     "simple-node-logger": "^0.93.40"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/register": "^7.0.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^9.0.0",
-    "babel-preset-everything": "^0.1.2",
     "chai": "^4.2.0",
     "chai-passport-strategy": "^1.0.1",
-    "eslint": "^5.5.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint": "^5.13.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-mocha": "^5.2.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
     "nock": "^10.0.2",
     "prettier": "^1.14.3",
@@ -73,8 +66,5 @@
   },
   "engines": {
     "node": ">=8.0.0"
-  },
-  "eslintIgnore": [
-    "lib"
-  ]
+  }
 }

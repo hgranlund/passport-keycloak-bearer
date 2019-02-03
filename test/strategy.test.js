@@ -1,9 +1,6 @@
 /* eslint-disable no-new */
-const { use, expect } = require('chai')
-const passport = require('chai-passport-strategy')
+const { expect } = require('chai')
 const KeycloakBearerStrategy = require('../src')
-
-use(passport)
 
 describe('KeycloakBearerStrategy', () => {
   it('should be named keycloak', () => {

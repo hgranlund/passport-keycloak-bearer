@@ -1,5 +1,4 @@
-const { expect } = require('chai')
-const passport = require('chai-passport-strategy')
+const { passport, expect } = require('chai')
 const nock = require('nock')
 const KeycloakBearerStrategy = require('../src')
 const { validToken, jwksResponse } = require('./testData')

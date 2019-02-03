@@ -8,7 +8,8 @@ uMe0ZIn9WRMSjYoTWH+cJrzN/WEyV4TB78r3ZT+0KgZumSD+uwFfBVi4uFQQSF5f
 rTuZZUr9JxPXNddXrLLQNdTkCo/aH9rZgdiCaQwbKUYvr1xHqbLT+OY5LFy0Zc/E
 sbKJey5sTmhhfrYs9PhUpR+MvOCrMHcnxnINAO6LeBk7WlW3Y5dXV74yeq5e6UDr
 a0YeJcNp6PHRhMHi15qLRKEKqtx2DELT2wIDAQAB
------END RSA PUBLIC KEY-----`
+-----END RSA PUBLIC KEY-----
+`
 
 const jwksResponse = {
   keys: [

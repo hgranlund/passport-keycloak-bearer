@@ -5,7 +5,7 @@ const Token = require('./token')
 class OIDCMatadata {
   constructor (host, realm, log) {
     this.log = log
-    this.jwksUrl = `${host}/auth/realms/${realm}/protocol/openid-connect/certs`
+    this.dicoverUrl = `${host}/realms/${realm}/.well-known/openid-configuration`
     this.getPemKeys().catch(err => {
       this.log.warn(err.message)
     })
@@ -26,7 +26,8 @@ class OIDCMatadata {
       return this.keys
     }
     try {
-      const response = await request.get(this.jwksUrl, { json: true })
+      const discoverUrls = await request.get(this.dicoverUrl, { json: true })
+      const response = await request.get(discoverUrls.jwks_uri, { json: true })
       this.keys = this.getKeysFromResponse(response)
       return this.keys
     } catch (error) {

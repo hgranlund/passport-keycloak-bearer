@@ -33,7 +33,7 @@ On successful authentication, passport adds the user information to `req.user` a
       // new KeycloakBearerStrategy(options, verify)
       passport.use(new KeycloakBearerStrategy(({
           "realm": "master",
-          "host": "https://keycloak.dev.com"
+          "url": "https://keycloak.dev.com/auth"
       }, (jwtPayload, done) => {
           const user = doSomethingWithUser(jwtPayload);
           return done(null, user);
@@ -46,9 +46,9 @@ The JWT authentication strategy is constructed as follows:
 
 ##### Options
 
-- `host` (Required)
+- `url` (Required)
 
-  Keycloak url. For instance: [https://keycloak.dev.org/].
+  Keycloak auth url. For instance: https://keycloak.dev.org/auth.
 
 - `realm` (Required)
 

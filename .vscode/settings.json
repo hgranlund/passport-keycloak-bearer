@@ -1,5 +1,36 @@
 {
   "mocha.requires": ["./test/bootstrap/node"],
   "mocha.files.glob": "./test/*.test.js",
-  "mocha.runTestsOnSave": "true"
+  "mocha.runTestsOnSave": "true",
+  "cSpell.enabledLanguageIds": [
+    "asciidoc",
+    "c",
+    "cpp",
+    "csharp",
+    "css",
+    "go",
+    "handlebars",
+    "html",
+    "jade",
+    "java",
+    "javascriptreact",
+    "json",
+    "jsonc",
+    "latex",
+    "less",
+    "markdown",
+    "php",
+    "plaintext",
+    "pug",
+    "python",
+    "restructuredtext",
+    "rust",
+    "scala",
+    "scss",
+    "text",
+    "typescript",
+    "typescriptreact",
+    "yaml",
+    "yml"
+  ]
 }

@@ -14,7 +14,7 @@ class KeycloakBearerStrategy extends Strategy {
     verifyOptions(options)
     const opts = setDefaults(options)
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-    const oidcManager = new OIDCManager(opts.host, opts.realm, opts.log)
+    const oidcManager = new OIDCManager(opts.url, opts.realm, opts.log)
     opts.secretOrKeyProvider = (req, token, done) => {
       oidcManager
         .pemKeyFromToken(token)

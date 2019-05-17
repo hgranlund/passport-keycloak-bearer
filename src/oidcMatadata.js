@@ -3,9 +3,10 @@ const rsaPublicKeyPem = require('./rsaPemDecoder')
 const Token = require('./token')
 
 class OIDCMatadata {
-  constructor (host, realm, log) {
+  constructor (url, realm, log) {
     this.log = log
-    this.dicoverUrl = `${host}/realms/${realm}/.well-known/openid-configuration`
+    this.url = url
+    this.discoveryUrl = `${url}/realms/${realm}/.well-known/openid-configuration`
     this.getPemKeys().catch(err => {
       this.log.warn(err.message)
     })
@@ -21,19 +22,34 @@ class OIDCMatadata {
     }))
   }
 
+  async getJwksUri () {
+    try {
+      const discoverUrls = await request.get(this.discoveryUrl, { json: true })
+      if (!discoverUrls.jwks_uri) {
+        throw new Error(`Unable to get OIDC metadata from ${this.discoveryUrl}`)
+      }
+      return discoverUrls.jwks_uri
+    } catch (error) {
+      throw new Error(
+        `Unable to get OIDC metadata from ${this.discoveryUrl}: ${
+          error.message
+        }`
+      )
+    }
+  }
+
   async getPemKeys () {
     if (Array.isArray(this.keys) && this.keys.length > 0) {
       return this.keys
     }
+    const jwksUri = await this.getJwksUri()
     try {
-      const discoverUrls = await request.get(this.dicoverUrl, { json: true })
-      const response = await request.get(discoverUrls.jwks_uri, { json: true })
-      this.keys = this.getKeysFromResponse(response)
-      return this.keys
+      const response = await request.get(jwksUri, { json: true })
+      return this.getKeysFromResponse(response)
     } catch (error) {
-      const errorMsg = `Cannot get AAD signing Keys from url ${
-        this.jwksUrl
-      }. We got a  ${error.statusCode}: ${error.message} `
+      const errorMsg = `Cannot get AAD signing Keys from url ${jwksUri}. We got a  ${
+        error.statusCode
+      }: ${error.message} `
       throw new Error(errorMsg)
     }
   }

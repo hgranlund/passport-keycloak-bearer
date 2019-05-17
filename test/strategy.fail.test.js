@@ -1,23 +1,26 @@
 const { passport, expect } = require('chai')
 const nock = require('nock')
 const KeycloakBearerStrategy = require('../src')
-const { validToken, jwksResponse } = require('./testData')
+const { validToken, jwksResponse, oidcMetadata } = require('./testData')
 
 const options = {
-  realm: 'realm',
-  host: 'https://host.com',
+  realm: 'master',
+  url: 'http://localhost:8080/auth',
   clientId: 'clientId'
 }
 
 describe('KeycloakBearerStrategy', () => {
-  xdescribe('failing a request in user-callback', () => {
+  describe('failing a request in user-callback', () => {
     let challenge
     const strategy = new KeycloakBearerStrategy(options, (verifidToken, done) =>
       done(null, false, 'The access token expired')
     )
     before(done => {
-      nock(options.host)
-        .get(`/auth/realms/${options.realm}/protocol/openid-connect/certs`)
+      nock(options.url)
+        .get(`/realms/${options.realm}/.well-known/openid-configuration`)
+        .reply(200, oidcMetadata)
+        .persist()
+        .get(`/realms/${options.realm}/protocol/openid-connect/certs`)
         .reply(200, jwksResponse)
 
       passport
@@ -50,7 +53,9 @@ describe('KeycloakBearerStrategy', () => {
       }
     )
     before(done => {
-      nock(options.host)
+      nock(options.url)
+        .get(`/auth/realms/${options.realm}/.well-known/openid-configuration`)
+        .reply(200, oidcMetadata)
         .get(`/auth/realms/${options.realm}/protocol/openid-connect/userinfo`)
         .reply(200)
 

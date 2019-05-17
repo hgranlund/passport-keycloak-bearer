@@ -7,8 +7,8 @@ const verifyOptions = options => {
   if (!options.realm) {
     throw new TypeError('KeycloakBearerStrategy: realm cannot be empty')
   }
-  if (!options.host || options.host === '') {
-    throw new TypeError('KeycloakBearerStrategy: host cannot be empty')
+  if (!options.url || options.url === '') {
+    throw new TypeError('KeycloakBearerStrategy: url cannot be empty')
   }
   if (options.customLogger) {
     if (typeof options.customLogger.error !== 'function') {

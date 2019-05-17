@@ -1,24 +1,29 @@
 const { passport, expect } = require('chai')
 const nock = require('nock')
 const KeycloakBearerStrategy = require('../src')
-const { validToken, jwksResponse } = require('./testData')
+const { validToken, jwksResponse, oidcMetadata } = require('./testData')
 const options = {
-  realm: 'realm',
-  host: 'https://host.com',
+  realm: 'master',
+  url: 'http://localhost:8080/auth',
   clientId: 'clientId'
 }
-
+let strategy
 describe('KeycloakBearerStrategy', () => {
-  nock(options.host)
-    .get(`/auth/realms/${options.realm}/protocol/openid-connect/certs`)
-    .reply(200, jwksResponse)
-    .persist()
+  before(() => {
+    nock(options.url)
+      .get(`/realms/${options.realm}/.well-known/openid-configuration`)
+      .reply(200, oidcMetadata)
+      .persist()
+      .get(`/realms/${options.realm}/protocol/openid-connect/certs`)
+      .reply(200, jwksResponse)
+      .persist()
 
-  const strategy = new KeycloakBearerStrategy(options, (verifidToken, done) => {
-    if (verifidToken) {
-      return done(null, verifidToken, { scope: 'read' })
-    }
-    return done(null, false)
+    strategy = new KeycloakBearerStrategy(options, (verifidToken, done) => {
+      if (verifidToken) {
+        return done(null, verifidToken, { scope: 'read' })
+      }
+      return done(null, false)
+    })
   })
 
   describe('handling a request with valid token in header', () => {

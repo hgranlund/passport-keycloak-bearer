@@ -45,7 +45,8 @@ class OIDCMatadata {
     const jwksUri = await this.getJwksUri()
     try {
       const response = await request.get(jwksUri, { json: true })
-      return this.getKeysFromResponse(response)
+      this.keys = this.getKeysFromResponse(response);
+      return this.keys;
     } catch (error) {
       const errorMsg = `Cannot get AAD signing Keys from url ${jwksUri}. We got a  ${
         error.statusCode

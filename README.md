@@ -86,6 +86,7 @@ The JWT authentication strategy is constructed as follows:
 
 - `jwtFromRequest` (Optional)
 
+  This value can be set according [passport-jwt](http://www.passportjs.org/packages/passport-jwt/#extracting-the-jwt-from-the-request)
   if this options is not used, passport-keycloak-bearer will obtain jwt from http header Auth as a Bearer token.
 
 - `jsonWebTokenOptions` (Optional)

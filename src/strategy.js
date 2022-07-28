@@ -13,7 +13,8 @@ class KeycloakBearerStrategy extends Strategy {
   constructor (options, verify) {
     verifyOptions(options)
     const opts = setDefaults(options)
-    opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
+    if (!opts.jwtFromRequest)
+      opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
     const oidcManager = new OIDCManager(opts.url, opts.realm, opts.log)
     opts.secretOrKeyProvider = (req, token, done) => {
       oidcManager

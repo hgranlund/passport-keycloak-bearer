@@ -84,6 +84,11 @@ The JWT authentication strategy is constructed as follows:
 
   If true do not validate the expiration of the token.
 
+- `jwtFromRequest` (Optional)
+
+  This value can be set according [passport-jwt](http://www.passportjs.org/packages/passport-jwt/#extracting-the-jwt-from-the-request)
+  if this options is not used, passport-keycloak-bearer will obtain jwt from http header Auth as a Bearer token.
+
 - `jsonWebTokenOptions` (Optional)
 
   passport-keycloak-bearer is verifying the token using [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken).

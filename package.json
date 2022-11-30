@@ -1,6 +1,6 @@
 {
   "name": "passport-keycloak-bearer",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "description": "HTTP Bearer authentication strategy for Passport and Keycloak",
   "keywords": [
     "passport-keycloak-bearer",
@@ -48,7 +48,7 @@
     "simple-node-logger": "^21.8.12"
   },
   "devDependencies": {
-    "chai": "^4.3.4",
+    "chai": "^4.3.7",
     "chai-passport-strategy": "^1.0.1",
     "eslint": "^7.32.0",
     "eslint-plugin-mocha": "^9.0.0",

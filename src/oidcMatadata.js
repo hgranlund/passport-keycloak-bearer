@@ -13,10 +13,11 @@ class OIDCMatadata {
   }
 
   getKeysFromResponse(body) {
-    if (!body.keys || body.keys.length === 0) {
+    const rsaKeys = body.keys && body.keys.filter((key) => key.kty === "RSA");
+    if (!rsaKeys || rsaKeys.length === 0) {
       throw new Error('We got no AAD signing Keys');
     }
-    return body.keys.map((key) => ({
+    return rsaKeys.map((key) => ({
       ...key,
       pemKey: rsaPublicKeyPem(key.n, key.e),
     }));

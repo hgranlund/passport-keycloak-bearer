@@ -33,6 +33,7 @@
     "src"
   ],
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/hgranlund/passport-keycloak-bearer"
@@ -48,6 +49,8 @@
     "simple-node-logger": "^21.8.12"
   },
   "devDependencies": {
+    "@types/passport": "^1.0.12",
+    "@types/passport-jwt": "^3.0.8",
     "chai": "^4.3.7",
     "chai-passport-strategy": "^1.0.1",
     "eslint": "^7.32.0",

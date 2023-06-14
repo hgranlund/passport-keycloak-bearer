@@ -1,9 +1,11 @@
 
-import type { StrategyOptions, VerifyCallback } from 'passport-jwt'
+import type { StrategyOptions, VerifyCallback, VerifyCallbackWithRequest } from 'passport-jwt'
 import { Strategy } from 'passport-jwt'
 
 class KeycloakBearerStrategy extends Strategy {
   constructor(options: KeycloakBearerStrategy.Options, verify?: VerifyCallback)
+  constructor(opt: KeycloakBearerStrategy.Options & { passReqToCallback: false }, verify: VerifyCallback);
+  constructor(opt: KeycloakBearerStrategy.Options & { passReqToCallback: true }, verify: VerifyCallbackWithRequest);
 }
 namespace KeycloakBearerStrategy{
   interface Options {
@@ -20,7 +22,7 @@ namespace KeycloakBearerStrategy{
   passReqToCallback?: StrategyOptions['passReqToCallback']
   /**
    * Logging level
-   * @default 'warn
+   * @default 'warn'
    */
   loggingLevel?: 'debug' | 'info' | 'warn' | 'error'
   /** Custom logging instance. */

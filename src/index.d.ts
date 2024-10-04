@@ -2,12 +2,12 @@
 import type { StrategyOptions, VerifyCallback, VerifyCallbackWithRequest } from 'passport-jwt'
 import { Strategy } from 'passport-jwt'
 
-class KeycloakBearerStrategy extends Strategy {
+declare class KeycloakBearerStrategy extends Strategy {
   constructor(options: KeycloakBearerStrategy.Options, verify?: VerifyCallback)
   constructor(opt: KeycloakBearerStrategy.Options & { passReqToCallback: false }, verify: VerifyCallback);
   constructor(opt: KeycloakBearerStrategy.Options & { passReqToCallback: true }, verify: VerifyCallbackWithRequest);
 }
-namespace KeycloakBearerStrategy{
+declare namespace KeycloakBearerStrategy{
   interface Options {
   /** Keycloak auth url. For instance: https://keycloak.dev.org/auth. */
   url: string
